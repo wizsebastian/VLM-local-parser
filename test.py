@@ -1,7 +1,10 @@
 import base64
+import sys
 import requests
 
-with open("/home/wizsebastian/projects/VLM-parse/test-image.png", "rb") as f:
+image_path = sys.argv[1] if len(sys.argv) > 1 else "test-image.png"
+
+with open(image_path, "rb") as f:
     img = base64.b64encode(f.read()).decode()
 
 response = requests.post(
