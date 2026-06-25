@@ -1,4 +1,4 @@
-from flask import Flask, request, jsonify, send_from_directory
+from flask import Flask, request, jsonify, render_template
 import requests
 import os
 
@@ -10,7 +10,7 @@ MODEL = os.environ.get("VLM_MODEL", "qwen2.5vl:7b")
 
 @app.route("/")
 def index():
-    return send_from_directory(".", "index.html")
+    return render_template("index.html")
 
 @app.route("/parse", methods=["POST"])
 def parse():
