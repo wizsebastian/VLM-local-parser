@@ -41,14 +41,15 @@ def parse():
     return jsonify({"text": text})
 
 def banner(host, port):
-    cyan, magenta, dim, reset = "\033[96m", "\033[95m", "\033[2m", "\033[0m"
+    # "Ember on Espresso" — warm amber accent, soft coral heart (256-color ANSI)
+    ember, heart, dim, reset = "\033[38;5;215m", "\033[38;5;209m", "\033[2m", "\033[0m"
     print(f"""
-{cyan}  ◢ VLM PARSE{reset}  {dim}— local document extraction{reset}
+{ember}  ◢ VLM PARSE{reset}  {dim}— local document extraction{reset}
 {dim}  ─────────────────────────────────────────{reset}
-  Serving on  {cyan}http://{host}:{port}{reset}
+  Serving on  {ember}http://{host}:{port}{reset}
   Model       {MODEL}
 {dim}  ─────────────────────────────────────────{reset}
-  Made with {magenta}❤{reset}  by {cyan}https://wizsebastian.com{reset}
+  Made with {heart}❤{reset}  by {ember}https://wizsebastian.com{reset}
 """)
 
 

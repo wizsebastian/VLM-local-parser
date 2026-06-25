@@ -15,18 +15,19 @@
     theme: {
       extend: {
         colors: {
-          surface: '#131315',
-          'surface-lowest': '#0e0e10',
-          'surface-low': '#1b1b1d',
-          'surface-c': '#1f1f21',
-          'surface-high': '#2a2a2c',
-          ink: '#e4e2e4',
-          'ink-dim': '#b9cacb',
-          outline: '#3b494b',
-          cyan: '#00f0ff',
-          'cyan-soft': '#7df4ff',
-          violet: '#b600f8',
-          'violet-soft': '#ebb2ff',
+          // "Ember on Espresso" — warm dark base + amber hero, jade counter-accent
+          surface: '#18120d',
+          'surface-lowest': '#100c08',
+          'surface-low': '#211a13',
+          'surface-c': '#2a2018',
+          'surface-high': '#352a20',
+          ink: '#efe7da',
+          'ink-dim': '#b3a48f',
+          outline: '#4a3b2c',
+          ember: '#f0883e',
+          'ember-soft': '#ffb27a',
+          jade: '#4fb89a',
+          'jade-soft': '#8fd9c4',
         },
         fontFamily: {
           sans: ['Inter', 'system-ui', 'sans-serif'],
@@ -46,7 +47,7 @@
   <header class="border-b border-white/5">
     <div class="max-w-content mx-auto px-4 md:px-16 h-16 flex items-center justify-between">
       <div class="flex items-center gap-2 font-mono text-sm font-semibold tracking-widest">
-        <span class="text-cyan">◢</span> VLM PARSE
+        <span class="text-ember">◢</span> VLM PARSE
       </div>
       <div class="flex items-center gap-2 text-xs font-mono text-ink-dim">
         <span class="status-dot"></span> LOCAL · GPU
@@ -95,7 +96,7 @@
           </button>
         </div>
         <textarea id="result" readonly placeholder="Waiting for input…"
-          class="flex-1 min-h-[200px] w-full bg-surface-lowest border border-white/5 rounded-md p-4 font-mono text-[13px] leading-relaxed text-ink resize-none focus:outline-none focus:border-cyan/40"></textarea>
+          class="flex-1 min-h-[200px] w-full bg-surface-lowest border border-white/5 rounded-md p-4 font-mono text-[13px] leading-relaxed text-ink resize-none focus:outline-none focus:border-ember/40"></textarea>
         <p id="status" class="font-mono text-xs mt-3 min-h-[1rem] text-ink-dim"></p>
       </aside>
 
@@ -106,8 +107,8 @@
         <span>⚡ In-device OCR</span><span>·</span><span>🔒 Private</span><span>·</span><span>qwen2.5vl:7b</span>
       </div>
       <div class="mt-3">
-        Made with <span class="text-violet-soft">♥</span> by
-        <a href="https://wizsebastian.com" target="_blank" rel="noopener" class="text-cyan hover:text-cyan-soft transition-colors">wizsebastian.com</a>
+        Made with <span class="text-ember-soft">♥</span> by
+        <a href="https://wizsebastian.com" target="_blank" rel="noopener" class="text-ember hover:text-ember-soft transition-colors">wizsebastian.com</a>
       </div>
     </footer>
 
