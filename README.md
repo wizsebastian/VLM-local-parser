@@ -1,95 +1,107 @@
 # VLM Local Parser 🖼️→📝
 
-Extrae texto de cualquier *screenshot* usando un **Vision Language Model (VLM)** corriendo **100% local** en tu GPU. Pega una captura con `Cmd+V` y obtén el texto en ~8 segundos, sin enviar tus datos a ninguna nube.
+Extract text from any *screenshot* using a **Vision Language Model (VLM)** running **100% locally** on your GPU. Paste a capture with `Cmd+V` and get the text back in ~8 seconds, without sending your data to any cloud.
 
-> Nació de un dolor real: cada captura que mandaba a Claude/Codex/Gemini para que me explicara una interfaz me costaba ~1,500 tokens. Multiplicado por decenas de imágenes al mes, eso devoraba mi cuota por hora y me dejaba sin tokens para lo que de verdad importaba: generar código. La solución fue dejar de pagar por "ver" y mover esa tarea a mi propio homelab de IA.
+> It was born from a real pain point: every screenshot I sent to Claude/Codex/Gemini to explain an interface cost me ~1,500 tokens. Multiplied by dozens of images a month, that devoured my hourly quota and left me without tokens for what really mattered: generating code. The fix was to stop paying to "see" and move that task to my own AI homelab.
 >
-> 📖 Historia completa: *"Why stop gaming saved my tokens: Construyendo mi propio AI Lab Local"*
+> 📖 Full story: *"Why stop gaming saved my tokens: Building my own local AI Lab"*
 
-## ¿Cómo funciona?
+## How it works
 
 ```
-Navegador (paste/drag imagen)
+Browser (paste/drag image)
       │  POST /parse  { image: base64 }
       ▼
-server.py  (Flask, puerto 5000)
+server.py  (Flask, port 5000)
       │  POST http://localhost:11434/api/generate
       ▼
-Ollama  →  qwen2.5vl:7b  (VLM en tu GPU)
+Ollama  →  qwen2.5vl:7b  (VLM on your GPU)
       │
       ▼
-  Texto extraído  →  textarea + botón "Copy"
+  Extracted text  →  textarea + "Copy" button
 ```
 
-Un OCR tradicional solo saca texto plano. Un **VLM** *entiende* la imagen (interfaces, diagramas, contexto), por eso da resultados mucho más útiles. Y `qwen2.5vl:7b` cabe en 12 GB de VRAM (probado en una RTX 4070).
+A traditional OCR only pulls plain text. A **VLM** *understands* the image (interfaces, diagrams, context), which is why it gives far more useful results. And `qwen2.5vl:7b` fits in 12 GB of VRAM (tested on an RTX 4070).
 
-## Requisitos
+## Requirements
 
-- **Python 3.x** (deps en `requirements.txt`: `flask`, `requests`)
-- **[Ollama](https://ollama.com/)** corriendo localmente
-- El modelo VLM descargado:
+- **Python 3.x** (deps in `requirements.txt`: `flask`, `requests`)
+- **[Ollama](https://ollama.com/)** running locally
+- The VLM model pulled:
   ```sh
   ollama pull qwen2.5vl:7b
   ```
-- Una GPU con ~12 GB de VRAM (funciona en CPU, pero lento)
+- A GPU with ~12 GB of VRAM (works on CPU, but slow)
 
-## Instalación y uso
+## Install & run
 
 ```sh
-# 1. Clona el repo
+# 1. Clone the repo
 git clone https://github.com/wizsebastian/VLM-local-parser.git
 cd VLM-local-parser
 
-# 2. Entorno virtual + dependencias
+# 2. Virtual environment + dependencies
 python -m venv venv
 source venv/bin/activate
 pip install -r requirements.txt
 
-# 3. Asegúrate de que Ollama esté corriendo y el modelo descargado
+# 3. Make sure Ollama is running and the model is pulled
 ollama pull qwen2.5vl:7b
 
-# 4. Levanta el servidor
+# 4. Start the server
 python server.py
 
-# 5. Abre http://100.73.140.30:5000 (vía Tailscale) y pega un screenshot con Cmd+V
+# 5. Open http://100.73.140.30:5000 (via Tailscale) and paste a screenshot with Cmd+V
 ```
 
-Por defecto el servidor escucha **solo en la interfaz Tailscale** (`100.73.140.30`), así que únicamente los dispositivos de tu tailnet pueden acceder. Puedes cambiarlo con variables de entorno:
+By default the server listens **only on the Tailscale interface** (`100.73.140.30`), so only devices on your tailnet can reach it. You can change this with environment variables:
 
-| Variable      | Default                              | Descripción                          |
+| Variable      | Default                              | Description                          |
 |---------------|--------------------------------------|--------------------------------------|
-| `VLM_HOST`    | `100.73.140.30`                      | Interfaz donde escucha Flask         |
-| `VLM_PORT`    | `5000`                               | Puerto                               |
-| `OLLAMA_URL`  | `http://localhost:11434/api/generate`| Endpoint de Ollama                   |
-| `VLM_MODEL`   | `qwen2.5vl:7b`                       | Modelo VLM a usar                    |
+| `VLM_HOST`    | `100.73.140.30`                      | Interface Flask binds to             |
+| `VLM_PORT`    | `5000`                               | Port                                 |
+| `OLLAMA_URL`  | `http://localhost:11434/api/generate`| Ollama endpoint                      |
+| `VLM_MODEL`   | `qwen2.5vl:7b`                       | VLM model to use                     |
 
-Ejemplo (solo en tu máquina): `VLM_HOST=127.0.0.1 python server.py`
+Example (local machine only): `VLM_HOST=127.0.0.1 python server.py`
 
-### Prueba rápida por CLI
+### Quick CLI test
 
-`test.py` envía una imagen directo a Ollama (sin pasar por Flask):
+`test.py` sends an image straight to Ollama (bypassing Flask):
 
 ```sh
-python test.py ruta/a/imagen.png   # o deja test-image.png en el directorio
+python test.py path/to/image.png   # or drop a test-image.png in the directory
 ```
 
 ## Endpoints
 
-| Método | Ruta      | Descripción                                              |
+| Method | Route     | Description                                              |
 |--------|-----------|----------------------------------------------------------|
-| `GET`  | `/`       | Sirve la interfaz web (`index.html`).                    |
-| `POST` | `/parse`  | Recibe `{ "image": "<base64 o data-URL>" }`, devuelve `{ "text": "..." }`. |
+| `GET`  | `/`       | Serves the web UI (`templates/index.html`).              |
+| `POST` | `/parse`  | Takes `{ "image": "<base64 or data-URL>" }`, returns `{ "text": "..." }`. |
 
 ## Stack
 
-- **Backend:** Flask + `requests` (proxy ligero hacia Ollama)
-- **Frontend:** HTML/CSS/JS vanilla, sin build
-- **Modelo:** `qwen2.5vl:7b` vía Ollama
+- **Backend:** Flask + `requests` (thin proxy to Ollama)
+- **Frontend:** Jinja2 templates (`templates/`) + Tailwind CSS (standalone Play CDN, no Node build) + vanilla JS (`static/`). Single responsive view — no separate React project.
+- **Model:** `qwen2.5vl:7b` via Ollama
 
-## ⚠️ Seguridad
+```
+VLM-local-parser/
+├── server.py             # Flask: serves the page + /parse proxy
+├── templates/index.html  # Jinja view, Tailwind utility classes (responsive)
+├── static/
+│   ├── css/style.css     # bespoke effects (glassmorphism, glow, scan line)
+│   └── js/app.js         # clipboard / drag & drop / fetch logic
+└── requirements.txt
+```
 
-Este proyecto está pensado para uso **personal en una red privada** (ej. detrás de Tailscale en tu homelab). **No lo expongas a internet tal cual**: el endpoint `/parse` no tiene autenticación ni límites de tamaño y el servidor escucha en `0.0.0.0`. Ver `SECURITY.md` para el detalle y cómo endurecerlo.
+## ⚠️ Security
+
+This project is meant for **personal use on a private network** (e.g. behind Tailscale in your homelab). The server is hardened to bind to the Tailscale interface and enforces a request-size limit, an Ollama timeout, and error handling. See `SECURITY.md` for the full assessment and the remaining hardening notes before exposing it any wider.
 
 ---
 
-*Construido desde la fricción de los rate limits hasta tener una API local de visión por computadora. — Luis Sebastian Vasquez. Usa la IA con responsabilidad.*
+*Built from the friction of rate limits all the way to a local computer-vision API. — Luis Sebastian Vasquez. Use AI responsibly.*
+
+🌐 [wizsebastian.com](https://wizsebastian.com)
