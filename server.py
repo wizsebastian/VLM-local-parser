@@ -40,7 +40,20 @@ def parse():
 
     return jsonify({"text": text})
 
+def banner(host, port):
+    cyan, magenta, dim, reset = "\033[96m", "\033[95m", "\033[2m", "\033[0m"
+    print(f"""
+{cyan}  ◢ VLM PARSE{reset}  {dim}— local document extraction{reset}
+{dim}  ─────────────────────────────────────────{reset}
+  Serving on  {cyan}http://{host}:{port}{reset}
+  Model       {MODEL}
+{dim}  ─────────────────────────────────────────{reset}
+  Made with {magenta}❤{reset}  by {cyan}https://wizsebastian.com{reset}
+""")
+
+
 if __name__ == "__main__":
     host = os.environ.get("VLM_HOST", "100.73.140.30")
     port = int(os.environ.get("VLM_PORT", "5000"))
+    banner(host, port)
     app.run(host=host, port=port, debug=False)
